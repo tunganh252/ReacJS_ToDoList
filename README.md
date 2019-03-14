@@ -1,4 +1,23 @@
-Link test: https://to-do-list-252.herokuapp.com/
+# Link test: https://to-do-list-252.herokuapp.com/
+```
+             /$$                             /$$
+            | $$                            | $$
+ /$$$$$$$  /$$$$$$        /$$$$$$  /$$$$$$$ | $$$$$$$
+| $$__  $$|_  $$_/       |____  $$| $$__  $$| $$__  $$
+| $$  \ $$  | $$          /$$$$$$$| $$  \ $$| $$  \ $$
+| $$  | $$  | $$ /$$     /$$__  $$| $$  | $$| $$  | $$
+| $$  | $$  |  $$$$/ /$$|  $$$$$$$| $$  | $$| $$  | $$
+|__/  |__/   \___/  |__/ \_______/|__/  |__/|__/  |__/
+
+> Coding by: Tung Anh Nguyen
+
+> Tel: 03 666 18 162
+
+> Email: tunganhnguyen2502@gmail.com
+
+> URL: facebook.com/NTA252
+
+```
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
