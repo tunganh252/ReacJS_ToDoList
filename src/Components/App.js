@@ -23,6 +23,47 @@ class App extends Component {
 			showTaskForm: false
 		});
 	}
+	// End show/hide form
+
+	// Update status
+	onUpdateStatus = (id) => {
+		let { tasks } = this.state;
+		let index = this.findIndex(id);
+		if (index !== -1) {
+			tasks[index].status = !tasks[index].status;
+		}
+		this.setState({
+			tasks: tasks
+		});
+		localStorage.setItem('tasks', JSON.stringify(tasks));
+	}
+	findIndex = (id) => {
+		let { tasks } = this.state;
+		let result = -1;
+		tasks.forEach((task, index) => {
+			if (task.id === id) {
+				return result = index;
+			}
+		});
+		return result;
+	}
+
+	// End Update status
+
+	// Delete task
+	onDeleteTask = (id) => {
+		let { tasks } = this.state;
+		let index = this.findIndex(id);
+		if (index !== -1) {
+			tasks.splice(index,1);
+			this.setState({
+				tasks: tasks
+			});
+			localStorage.setItem('tasks', JSON.stringify(tasks));
+		}
+		this.onCloseForm();
+	}
+	// End delete taks
 
 	// lifecycle
 	componentWillMount() {
@@ -78,7 +119,11 @@ class App extends Component {
 						<Control />
 						<br />
 						{/* Task show full list */}
-						<TaskList tasks={tasks} />
+						<TaskList
+							tasks={tasks} 
+							onUpdateStatus={this.onUpdateStatus}
+							onDeleteTask={this.onDeleteTask}
+							/>
 					</div>
 				</div>
 			</div>

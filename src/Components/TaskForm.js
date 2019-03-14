@@ -59,8 +59,11 @@ class TaskForm extends Component {
                         </select>
                         <br></br>
                         <div className="text-center">
-                            <button type="submit" className="btn btn-warning">
-                                <span className="fa fa-plus mr-5"></span>Lưu Lại</button>
+                            <button
+                                type="submit" className="btn btn-warning">
+                                <span className="fa fa-plus mr-5"></span>
+                                Lưu Lại
+                            </button>
                             &nbsp;
                               <button onClick={() => this.onClear()} type="button" className="btn btn-danger">
                                 <span className="fa fa-close mr-5"></span>Hủy Bỏ</button>
