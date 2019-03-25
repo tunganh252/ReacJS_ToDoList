@@ -8,8 +8,9 @@ class Control extends Component {
             <div className="row mt-15">
                 <br />
                 {/* // search */}
-                <Search />
-
+                <Search
+                    onSearch={this.props.onSearch}
+                />
                 {/* // sort */}
                 <Sort />
             </div>

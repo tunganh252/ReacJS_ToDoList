@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import TaskForm from '../Components/TaskForm'
 import Control from '../Components/Control'
 import TaskList from '../Components/TaskList'
@@ -10,7 +10,12 @@ class App extends Component {
         this.state = {
             tasks: [], // id:unique, name, status
             showTaskForm: false,
-            taskEditing: null
+            taskEditing: null,
+            filter: {
+                name: '',
+                status: -1
+            },
+            keyword: '',
         }
     }
     // Toggle Form (show/hide)
@@ -18,34 +23,34 @@ class App extends Component {
         if (this.state.showTaskForm && this.state.taskEditing !== null) {
             this.setState({
                 showTaskForm: true,
-                taskEditing:null
+                taskEditing: null
             });
-            
-        }else {
-        this.setState({
-            showTaskForm: !this.state.showTaskForm,
-            taskEditing:null
-        });
-      }
+
+        } else {
+            this.setState({
+                showTaskForm: !this.state.showTaskForm,
+                taskEditing: null
+            });
+        }
     }
     onCloseForm = () => {
-        this.setState({showTaskForm: false, taskEditing:null});
+        this.setState({ showTaskForm: false, taskEditing: null });
     }
     onShowForm = () => {
-        this.setState({showTaskForm: true});
+        this.setState({ showTaskForm: true });
     }
     // End show/hide form Update status
     onUpdateStatus = (id) => {
-        let {tasks} = this.state;
+        let { tasks } = this.state;
         let index = this.findIndex(id);
         if (index !== -1) {
             tasks[index].status = !tasks[index].status;
         }
-        this.setState({tasks: tasks});
+        this.setState({ tasks: tasks });
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
     findIndex = (id) => {
-        let {tasks} = this.state;
+        let { tasks } = this.state;
         let result = -1;
         tasks.forEach((task, index) => {
             if (task.id === id) {
@@ -60,21 +65,20 @@ class App extends Component {
 	 * Update task theo id
 	 */
     onUpdate = (id) => {
-        let {tasks} = this.state;
+        let { tasks } = this.state;
         let index = this.findIndex(id);
         let taskEditing = tasks[index];
-        this.setState({taskEditing: taskEditing});
+        this.setState({ taskEditing: taskEditing });
         this.onShowForm()
 
     }
-
     // End function Update Delete task
     onDeleteTask = (id) => {
-        let {tasks} = this.state;
+        let { tasks } = this.state;
         let index = this.findIndex(id);
         if (index !== -1) {
             tasks.splice(index, 1);
-            this.setState({tasks: tasks});
+            this.setState({ tasks: tasks });
             localStorage.setItem('tasks', JSON.stringify(tasks));
         }
         this.onCloseForm();
@@ -83,8 +87,26 @@ class App extends Component {
     componentWillMount() {
         if (localStorage && localStorage.getItem('tasks')) {
             let tasks = JSON.parse(localStorage.getItem('tasks'))
-            this.setState({tasks: tasks});
+            this.setState({ tasks: tasks });
         }
+    }
+    // Lọc dữ liệu trên table
+    onFilter = (filterName, filterStatus) => {
+        filterStatus = parseInt(filterStatus);
+        this.setState({
+            filter: {
+                name: filterName.toLowerCase(),
+                status: filterStatus
+            }
+        })
+
+    }
+    // Search
+    onSearch = (keyword) => {
+        this.setState({
+            keyword: keyword
+        })
+
     }
     // Tạo random ID
     s4 = () => {
@@ -99,7 +121,7 @@ class App extends Component {
     //
     //**Add new */
     onSubmit = (data) => {
-        let {tasks} = this.state;
+        let { tasks } = this.state;
         if (data.id === '') {
             data.id = this.generateID();
             tasks.push(data)
@@ -107,35 +129,63 @@ class App extends Component {
             let index = this.findIndex(data.id);
             tasks[index] = data;
         }
-        this.setState({tasks: tasks, taskEditing: null});
+        this.setState({ tasks: tasks, taskEditing: null });
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
     render() {
-        let {tasks, showTaskForm, taskEditing} = this.state; /// let tasks = this.state.tasks
+        let { tasks, showTaskForm, taskEditing, filter, keyword } = this.state; /// let tasks = this.state.tasks
+        if (filter) {
+            if (filter.name) {
+                tasks = tasks.filter(item => {
+                    return item.name.toLowerCase().indexOf(filter.name) !== -1;
+                })
+            }
+            /** K dùng if(filter.status) /// => so sánh dk != 0 nên trường hơp 0: deactive bị loại bỏ */
+            tasks = tasks.filter(item => {
+                if (filter.status === -1) {
+                    return item
+                }
+                else {
+                    return item.status === (filter.status === 1 ? true : false);
+                }
+            });
+        }
+        if (keyword) {
+            tasks= tasks.filter(item => {
+                return item.name.toLowerCase().indexOf(keyword) !== -1;
+            });
+        }
+
         let elmShowTaskForm = showTaskForm
             ? <TaskForm
-                    onSubmit={this.onSubmit}
-                    onCloseForm={this.onCloseForm}
-                    task={taskEditing}/>
+                onSubmit={this.onSubmit}
+                onCloseForm={this.onCloseForm}
+                // onToggleForm= {this.onToggleForm}
+                task={taskEditing} />
             : '';
+
+        /**/////////////////////////////////////////////////////////////////////// */
+        /**///////////////////==============================////////////////////// */
+        /**/////////////////////////////////////////////////////////////////////// */
+
         return (
             <div className="container">
                 <div className="text-center">
                     <h1>Quản Lý Công Việc</h1>
-                    <hr/>
+                    <hr />
                 </div>
                 <div className="row">
                     <div
                         className={showTaskForm
-                        ? 'col-md-4'
-                        : ''}>
+                            ? 'col-md-4'
+                            : ''}>
                         {/* TaskForm */}
                         {elmShowTaskForm}
                     </div>
                     <div
                         className={showTaskForm
-                        ? 'col-md-8'
-                        : 'col-md-12'}>
+                            ? 'col-md-8'
+                            : 'col-md-12'}>
                         <button
                             onClick={() => this.onToggleForm()}
                             type="button"
@@ -144,13 +194,17 @@ class App extends Component {
                             Thêm Công Việc
                         </button>
                         {/* Search + Sortable */}
-                        <Control/>
-                        <br/> {/* Task show full list */}
+                        <Control
+                            onSearch={this.onSearch}
+                        />
+                        <br /> {/* Task show full list */}
                         <TaskList
                             tasks={tasks}
                             onUpdateStatus={this.onUpdateStatus}
                             onDeleteTask={this.onDeleteTask}
-                            onUpdate={this.onUpdate}/>
+                            onUpdate={this.onUpdate}
+                            onFilter={this.onFilter}
+                        />
                     </div>
                 </div>
             </div>
