@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Search from '../Components/Search'
-import Sort from '../Components/Sort'
+import TaskSearchControl from './TaskSearchControl'
+import TaskSortControl from './TaskSortControl'
 
 class Control extends Component {
     render() {
@@ -8,11 +8,15 @@ class Control extends Component {
             <div className="row mt-15">
                 <br />
                 {/* // search */}
-                <Search
+                <TaskSearchControl
                     onSearch={this.props.onSearch}
                 />
                 {/* // sort */}
-                <Sort />
+                <TaskSortControl 
+                    onSort={this.props.onSort}
+                    sortBy={this.props.sortBy}
+                    sortValue={this.props.sortValue}
+                />
             </div>
         );
     }

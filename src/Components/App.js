@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TaskForm from '../Components/TaskForm'
-import Control from '../Components/Control'
+import TaskControl from './TaskControl'
 import TaskList from '../Components/TaskList'
 import '../App.css';
 
@@ -11,11 +11,13 @@ class App extends Component {
             tasks: [], // id:unique, name, status
             showTaskForm: false,
             taskEditing: null,
+            keyword: '',
             filter: {
                 name: '',
                 status: -1
             },
-            keyword: '',
+            sortBy: 'name',
+            sortValue: 1
         }
     }
     // Toggle Form (show/hide)
@@ -38,6 +40,19 @@ class App extends Component {
     }
     onShowForm = () => {
         this.setState({ showTaskForm: true });
+    }
+    //**Add new */
+    onSubmit = (data) => {
+        let { tasks } = this.state;
+        if (data.id === '') {
+            data.id = this.generateID();
+            tasks.push(data)
+        } else {
+            let index = this.findIndex(data.id);
+            tasks[index] = data;
+        }
+        this.setState({ tasks: tasks, taskEditing: null });
+        localStorage.setItem('tasks', JSON.stringify(tasks));
     }
     // End show/hide form Update status
     onUpdateStatus = (id) => {
@@ -108,6 +123,19 @@ class App extends Component {
         })
 
     }
+    // Sort table
+    onSort = (sortBy, sortValue) => {
+        this.setState({
+            sortBy: sortBy,
+            sortValue: sortValue
+        })
+    }
+    /**
+     * //////////////
+     * //////////////
+     * //////////////
+     */
+
     // Tạo random ID
     s4 = () => {
         return Math.floor((1 + Math.random()) * 0x10000)
@@ -118,22 +146,10 @@ class App extends Component {
         return this.s4() + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4() + '-' + this.s4();
     }
     // End random ID
-    //
-    //**Add new */
-    onSubmit = (data) => {
-        let { tasks } = this.state;
-        if (data.id === '') {
-            data.id = this.generateID();
-            tasks.push(data)
-        } else {
-            let index = this.findIndex(data.id);
-            tasks[index] = data;
-        }
-        this.setState({ tasks: tasks, taskEditing: null });
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
+    //--------------
+
     render() {
-        let { tasks, showTaskForm, taskEditing, filter, keyword } = this.state; /// let tasks = this.state.tasks
+        let { tasks, showTaskForm, taskEditing, filter, keyword, sortBy, sortValue } = this.state; /// let tasks = this.state.tasks
         if (filter) {
             if (filter.name) {
                 tasks = tasks.filter(item => {
@@ -151,8 +167,36 @@ class App extends Component {
             });
         }
         if (keyword) {
-            tasks= tasks.filter(item => {
+            tasks = tasks.filter(item => {
                 return item.name.toLowerCase().indexOf(keyword) !== -1;
+            });
+        }
+        /**
+         * Sort theo tên - status
+         */
+        if (sortBy === 'name') {
+            tasks.sort((a, b) => {
+                if (a.name > b.name) {
+                    return sortValue;
+                }
+                else if (a.name < b.name) {
+                    return -sortValue;
+                }
+                else {
+                    return 0;
+                }
+            });
+        } else if (sortBy === 'status') {
+            tasks.sort((a, b) => {
+                if (a.status > b.status) {
+                    return -sortValue;
+                }
+                else if (a.status < b.status) {
+                    return sortValue;
+                }
+                else {
+                    return 0;
+                }
             });
         }
 
@@ -194,8 +238,11 @@ class App extends Component {
                             Thêm Công Việc
                         </button>
                         {/* Search + Sortable */}
-                        <Control
+                        <TaskControl
                             onSearch={this.onSearch}
+                            onSort={this.onSort}
+                            sortBy={sortBy}
+                            sortValue={sortValue}
                         />
                         <br /> {/* Task show full list */}
                         <TaskList
