@@ -1,5 +1,5 @@
 
-# Deploy hosting Firebase: https://react-todolist-833c9.firebaseapp.com/
+## Deploy hosting Firebase: https://react-todolist-833c9.firebaseapp.com/
 - Note: check file firebase.json --> edit key "hosting" with value "build"
 
 > npm run build
